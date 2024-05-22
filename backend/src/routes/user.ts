@@ -3,35 +3,14 @@ import { PrismaClient } from "@prisma/client/edge"
 import { withAccelerate } from "@prisma/extension-accelerate"
 import { sign, verify } from "hono/jwt"
 
-const app = new Hono<{
+export const userRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string
     JWT_SECRET: string
   }
 }>()
 
-app.use("/api/v1/blog/*", async (c, next) => {
-  // get the header
-  // verify the header
-  // if the header is correct, proceed..
-  // if the header is not correct, return 403 status code
-
-  const header = c.req.header("authorization")
-
-  const token = header?.split(" ")[1]
-
-  // @ts-ignore
-  const response = await verify(token, c.env.JWT_SECRET)
-
-  if (response.id) {
-    return next()
-  } else {
-    c.status(403)
-    return c.json({ error: "unauthorized" })
-  }
-})
-
-app.post("/api/v1/signup", async (c) => {
+userRouter.post("/api/v1/signup", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
@@ -55,7 +34,7 @@ app.post("/api/v1/signup", async (c) => {
   }
 })
 
-app.post("/api/v1/signin", async (c) => {
+userRouter.post("/api/v1/signin", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
@@ -78,19 +57,3 @@ app.post("/api/v1/signin", async (c) => {
 
   return c.json({ jwt })
 })
-
-app.post("/api/v1/blog", (c) => {
-  return c.text("blog route")
-})
-
-app.get("/app/v1/blog/:id", (c) => {
-  const id = c.req.param("id")
-  console.log(id)
-  return c.text("get blog for ${id}")
-})
-
-app.put("/app/v1/blog/:id", (c) => {
-  return c.text("update your blog")
-})
-
-export default app
