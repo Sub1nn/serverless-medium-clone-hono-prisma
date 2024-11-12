@@ -21,8 +21,9 @@ const FullBlog = ({
   useEffect(() => {
     const fetchQuote = async () => {
       try {
-        const response = await axios.get("https://api.quotable.io/random");
-        setQuote(response.data.content);
+        const response = await axios.get("http://localhost:8787/api/v1/quote");
+        console.log(response);
+        setQuote(response.data.quote);
       } catch (error) {
         console.error("Error fetching the quote", error);
       }

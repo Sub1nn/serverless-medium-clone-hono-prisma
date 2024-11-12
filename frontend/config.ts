@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://backend.sub-1n.workers.dev";
+export const BACKEND_URL = "http://localhost:8787";
